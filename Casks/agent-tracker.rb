@@ -13,10 +13,10 @@ cask "agent-tracker" do
     strategy :github_latest
   end
 
-  # `brew style` wants the bare `:sonoma`, but the Cask Cookbook documents
-  # the comparison string as the unambiguous way to say "at least". Getting
-  # this wrong locks out every macOS 15+ user, so the style warning stays.
-  depends_on macos: ">= :sonoma"
+  # Bare symbol, not ">= :sonoma": the string form is deprecated and warns on
+  # every load. The symbol already means "that release or newer" — verified
+  # with `brew info`, which reports "Required: macOS >= 14" for both.
+  depends_on macos: :sonoma
 
   app "AgentTracker.app"
 
