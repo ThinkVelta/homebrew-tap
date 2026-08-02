@@ -30,7 +30,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: Homebrew/actions/setup-homebrew@master
+      # Pinned rather than @master: Homebrew deprecated the moving reference,
+      # and says the warning becomes an error once Homebrew 5.2.0 ships.
+      - uses: Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
 
       # brew resolves casks by tap, not by path, so the checkout has to sit
       # where a tap would. Symlinked rather than copied so the checks run
