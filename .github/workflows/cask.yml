@@ -1,0 +1,74 @@
+name: Cask checks
+
+# `push` matters more than `pull_request` here. Every defect this tap has ever
+# had arrived by a direct push to main, and the recurring change — the version
+# and sha256 bump from agent-tracker's release workflow — is a plain
+# `git push origin HEAD:refs/heads/main`. A pull_request-only workflow would sit
+# out the one change that can break `brew install` for everyone at once.
+#
+# The schedule is not redundant with either. A release asset can be replaced or
+# deleted after it was published, and nothing pushes to this repo when that
+# happens.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cask-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cask:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v5
+
+      # Pinned rather than @master: Homebrew deprecated the moving reference,
+      # and says the warning becomes an error once Homebrew 5.2.0 ships.
+      - uses: Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c # 2026.07.10.1
+
+      # brew resolves casks by tap, not by path, so the checkout has to sit
+      # where a tap would. Symlinked rather than copied so the checks run
+      # against the commit under test.
+      - name: Expose the checkout to brew as a tap
+        run: |
+          link="$(brew --repository)/Library/Taps/thinkvelta/homebrew-tap"
+          mkdir -p "$(dirname "$link")"
+          rm -rf "$link"
+          ln -s "$GITHUB_WORKSPACE" "$link"
+
+      - name: brew style
+        run: brew style thinkvelta/tap
+
+      # --online is the point: it downloads the artifact and verifies the sha256
+      # against it, which is the check that catches a stale digest after a
+      # release is re-cut.
+      #
+      # Deliberately absent: --new demands notarization, and --signing is both
+      # deprecated and would reject a self-signed build. Neither describes how
+      # this project ships.
+      - name: brew audit
+        run: |
+          for cask in Casks/*.rb; do
+            brew audit --cask --online "thinkvelta/tap/$(basename "$cask" .rb)"
+          done
+
+      # No brew check reads the caveats prose, so the one defect class brew
+      # cannot see is the one worth guarding by hand: telling users to run a
+      # flag that does not exist. Checks the rendered text rather than the
+      # source, so a source comment explaining that a flag is fake does not
+      # trip it.
+      - name: Caveats must not name flags that do not exist
+        run: |
+          for cask in Casks/*.rb; do
+            token="$(basename "$cask" .rb)"
+            brew info --json=v2 --cask "thinkvelta/tap/$token" \
+              | python3 .github/scripts/check-caveats.py "$token"
+          done

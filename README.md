@@ -36,8 +36,10 @@ exactly the same `brew install` experience.
 
 ## Updating
 
-Casks here are bumped automatically by the source repository's release workflow
-when a new version is tagged. Nothing to do by hand.
+Tagging a release in the source repository updates the cask here, as long as
+that repository holds a `TAP_GITHUB_TOKEN` with write access to this one. When
+it does not, the release still succeeds and prints the version and digest to
+set, and someone edits the cask by hand.
 
 ## License
 

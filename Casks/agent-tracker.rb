@@ -13,9 +13,12 @@ cask "agent-tracker" do
     strategy :github_latest
   end
 
-  # Bare symbol, not ">= :sonoma": the string form is deprecated and warns on
-  # every load. The symbol already means "that release or newer" — verified
-  # with `brew info`, which reports "Required: macOS >= 14" for both.
+  # Bare symbol rather than ">= :sonoma". The symbol already means "that release
+  # or newer": `brew info` reports "Required: macOS >= 14" for both spellings.
+  # The string form is worse than untidy, because under HOMEBREW_DEVELOPER=1 it
+  # does not warn, it fails to load: "Error: Calling string comparison format
+  # for `depends_on macos:` is deprecated!". CI sets that variable, so the
+  # string form would break every check here.
   depends_on macos: :sonoma
 
   app "AgentTracker.app"
@@ -28,9 +31,11 @@ cask "agent-tracker" do
   ]
 
   # Releases are signed with a self-signed certificate rather than a Developer
-  # ID one, so Gatekeeper still asks on first launch unless the user installs
-  # with `--no-quarantine`. What the certificate does buy is a stable code
-  # signature, which is why the Accessibility permission survives an upgrade.
+  # ID one, so Gatekeeper always asks on first launch. There is no install flag
+  # that avoids it: Homebrew 6 rejects `--no-quarantine` outright and ignores it
+  # in HOMEBREW_CASK_OPTS, which is why the caveats below give the two routes
+  # that do work. What the certificate buys is a stable code signature, which is
+  # why the Accessibility permission survives an upgrade.
   caveats do
     <<~EOS
       Agent Tracker needs Accessibility permission to focus a session's terminal
