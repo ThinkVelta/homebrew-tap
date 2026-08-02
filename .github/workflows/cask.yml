@@ -28,7 +28,7 @@ jobs:
   cask:
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7.0.1
 
       # Pinned rather than @master: Homebrew deprecated the moving reference,
       # and says the warning becomes an error once Homebrew 5.2.0 ships.
