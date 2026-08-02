@@ -36,13 +36,15 @@ cask "agent-tracker" do
       Agent Tracker needs Accessibility permission to focus a session's terminal
       window. Its first-run window walks you through granting it.
 
-      This build is not notarized. If macOS refuses to open it, either reinstall
-      with:
+      This build is signed but not notarized, and Homebrew always quarantines a
+      cask, so macOS will ask on first launch. Either open System Settings >
+      Privacy & Security, find the message naming AgentTracker, and click
+      "Open Anyway", or clear the attribute yourself:
 
-        brew install --cask --no-quarantine agent-tracker
+        xattr -d com.apple.quarantine /Applications/AgentTracker.app
 
-      or open System Settings > Privacy & Security, find the message naming
-      AgentTracker, and click "Open Anyway".
+      Only the first launch needs this. Updates keep your Accessibility grant,
+      because every release carries the same code signature.
     EOS
   end
 end
