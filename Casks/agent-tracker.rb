@@ -13,9 +13,19 @@ cask "agent-tracker" do
     strategy :github_latest
   end
 
+  # `brew style` wants the bare `:sonoma`, but the Cask Cookbook documents
+  # the comparison string as the unambiguous way to say "at least". Getting
+  # this wrong locks out every macOS 15+ user, so the style warning stays.
   depends_on macos: ">= :sonoma"
 
   app "AgentTracker.app"
+
+  uninstall quit: "com.thinkvelta.agent-tracker"
+
+  zap trash: [
+    "~/.agent-tracker",
+    "~/Library/Preferences/com.thinkvelta.agent-tracker.plist",
+  ]
 
   # Releases are signed with a self-signed certificate rather than a Developer
   # ID one, so Gatekeeper still asks on first launch unless the user installs
@@ -35,11 +45,4 @@ cask "agent-tracker" do
       AgentTracker, and click "Open Anyway".
     EOS
   end
-
-  uninstall quit: "com.thinkvelta.agent-tracker"
-
-  zap trash: [
-    "~/.agent-tracker",
-    "~/Library/Preferences/com.thinkvelta.agent-tracker.plist",
-  ]
 end
