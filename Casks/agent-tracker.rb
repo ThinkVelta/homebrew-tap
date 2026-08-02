@@ -13,10 +13,10 @@ cask "agent-tracker" do
     strategy :github_latest
   end
 
-  # `brew style` wants the bare `:sonoma`, but the Cask Cookbook documents
-  # the comparison string as the unambiguous way to say "at least". Getting
-  # this wrong locks out every macOS 15+ user, so the style warning stays.
-  depends_on macos: ">= :sonoma"
+  # Bare symbol, not ">= :sonoma": the string form is deprecated and warns on
+  # every load. The symbol already means "that release or newer" — verified
+  # with `brew info`, which reports "Required: macOS >= 14" for both.
+  depends_on macos: :sonoma
 
   app "AgentTracker.app"
 
@@ -36,13 +36,15 @@ cask "agent-tracker" do
       Agent Tracker needs Accessibility permission to focus a session's terminal
       window. Its first-run window walks you through granting it.
 
-      This build is not notarized. If macOS refuses to open it, either reinstall
-      with:
+      This build is signed but not notarized, and Homebrew always quarantines a
+      cask, so macOS will ask on first launch. Either open System Settings >
+      Privacy & Security, find the message naming AgentTracker, and click
+      "Open Anyway", or clear the attribute yourself:
 
-        brew install --cask --no-quarantine agent-tracker
+        xattr -d com.apple.quarantine /Applications/AgentTracker.app
 
-      or open System Settings > Privacy & Security, find the message naming
-      AgentTracker, and click "Open Anyway".
+      Only the first launch needs this. Updates keep your Accessibility grant,
+      because every release carries the same code signature.
     EOS
   end
 end

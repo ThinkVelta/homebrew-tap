@@ -16,12 +16,16 @@ A macOS menu bar app that tells you which AI coding session is waiting on you.
 brew install --cask agent-tracker
 ```
 
-Releases are signed but not notarized, so Gatekeeper asks on first launch. To
-skip that, install with:
+Releases are signed but not notarized, and Homebrew always quarantines a cask,
+so macOS asks on first launch. Clear it in **System Settings > Privacy &
+Security > Open Anyway**, or do it yourself:
 
 ```sh
-brew install --cask --no-quarantine agent-tracker
+xattr -d com.apple.quarantine /Applications/AgentTracker.app
 ```
+
+Only the first launch needs this. Updates keep your Accessibility grant, because
+every release carries the same code signature.
 
 ## Why a tap rather than homebrew-cask
 
