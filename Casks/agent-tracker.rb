@@ -41,10 +41,20 @@ cask "agent-tracker" do
       Agent Tracker needs Accessibility permission to focus a session's terminal
       window. Its first-run window walks you through granting it.
 
-      This build is signed but not notarized, and Homebrew always quarantines a
-      cask, so macOS will ask on first launch. Either open System Settings >
-      Privacy & Security, find the message naming AgentTracker, and click
-      "Open Anyway", or clear the attribute yourself:
+      FIRST LAUNCH IS BLOCKED, AND THE DIALOG'S DEFAULT BUTTON DELETES THE APP.
+
+      This build is signed but not yet notarized, and Homebrew always
+      quarantines a cask, so macOS refuses the first launch with "Apple could
+      not verify AgentTracker is free of malware", offering "Move to Trash"
+      (highlighted) and "Done".
+
+      Click Done. Never Move to Trash. Then open System Settings > Privacy &
+      Security, scroll to Security, and click "Open Anyway" next to the message
+      naming AgentTracker. Launch it again and it opens normally from then on.
+
+      To skip that entirely, clear the quarantine attribute before the first
+      launch. This switches off a real Gatekeeper check for this app, so only
+      do it if you are comfortable with that:
 
         xattr -d com.apple.quarantine /Applications/AgentTracker.app
 
