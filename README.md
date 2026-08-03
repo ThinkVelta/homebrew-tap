@@ -4,13 +4,12 @@ Casks for [Velta](https://thinkvelta.ai)'s open-source tools.
 
 ```sh
 brew tap ThinkVelta/tap
-brew trust thinkvelta/tap
 ```
 
 Homebrew 6 refuses to load casks from taps outside its own repositories until
-you trust them, so without the second line an install stops with *"Refusing to
-load cask … from untrusted tap"*. That applies to every third-party tap, and
-trusting is per-machine.
+you trust them, so each install below includes a `brew trust` line. Without it
+the install stops with *"Refusing to load cask … from untrusted tap"*. That
+applies to every third-party tap, and trusting is per-machine.
 
 ## Available
 
@@ -19,8 +18,13 @@ trusting is per-machine.
 A macOS menu bar app that tells you which AI coding session is waiting on you.
 
 ```sh
+brew trust --cask thinkvelta/tap/agent-tracker
 brew install --cask agent-tracker
 ```
+
+Trusting the single cask rather than the whole tap is deliberate: `brew trust
+thinkvelta/tap` also works, but it covers everything added here in future,
+including casks that do not exist yet.
 
 > [!IMPORTANT]
 > **The first launch is blocked, and the dialog's default button deletes the
