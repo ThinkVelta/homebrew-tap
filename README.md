@@ -4,7 +4,13 @@ Casks for [Velta](https://thinkvelta.ai)'s open-source tools.
 
 ```sh
 brew tap ThinkVelta/tap
+brew trust thinkvelta/tap
 ```
+
+Homebrew 6 refuses to load casks from taps outside its own repositories until
+you trust them, so without the second line an install stops with *"Refusing to
+load cask … from untrusted tap"*. That applies to every third-party tap, and
+trusting is per-machine.
 
 ## Available
 
@@ -16,13 +22,27 @@ A macOS menu bar app that tells you which AI coding session is waiting on you.
 brew install --cask agent-tracker
 ```
 
-Releases are signed but not notarized, and Homebrew always quarantines a cask,
-so macOS asks on first launch. Clear it in **System Settings > Privacy &
-Security > Open Anyway**, or do it yourself:
+> [!IMPORTANT]
+> **The first launch is blocked, and the dialog's default button deletes the
+> app.** Releases are signed but not yet notarized, and Homebrew always
+> quarantines a cask, so macOS refuses with *"Apple could not verify
+> AgentTracker is free of malware"*, offering **Move to Trash** (highlighted)
+> and **Done**.
+>
+> Click **Done**. Never Move to Trash. Then open **System Settings > Privacy &
+> Security**, scroll to Security, and click **Open Anyway** next to the message
+> naming AgentTracker.
+
+To skip that dialog, clear the quarantine attribute before the first launch.
+This switches off a real Gatekeeper check for this app, so only do it if you are
+comfortable with that:
 
 ```sh
-xattr -d com.apple.quarantine /Applications/AgentTracker.app
+xattr -dr com.apple.quarantine -- /Applications/AgentTracker.app
 ```
+
+It must be recursive: the attribute is on every file in the bundle, not just its
+root, so clearing the root alone leaves the app quarantined.
 
 Only the first launch needs this. Updates keep your Accessibility grant, because
 every release carries the same code signature.
