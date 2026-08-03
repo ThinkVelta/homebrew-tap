@@ -56,7 +56,7 @@ cask "agent-tracker" do
       launch. This switches off a real Gatekeeper check for this app, so only
       do it if you are comfortable with that:
 
-        xattr -d com.apple.quarantine /Applications/AgentTracker.app
+        xattr -dr com.apple.quarantine -- /Applications/AgentTracker.app
 
       Only the first launch needs this. Updates keep your Accessibility grant,
       because every release carries the same code signature.
