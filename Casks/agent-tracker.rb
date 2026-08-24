@@ -30,36 +30,15 @@ cask "agent-tracker" do
     "~/Library/Preferences/com.thinkvelta.agent-tracker.plist",
   ]
 
-  # Releases are signed with a self-signed certificate rather than a Developer
-  # ID one, so Gatekeeper always asks on first launch. There is no install flag
-  # that avoids it: Homebrew 6 rejects `--no-quarantine` outright and ignores it
-  # in HOMEBREW_CASK_OPTS, which is why the caveats below give the two routes
-  # that do work. What the certificate buys is a stable code signature, which is
-  # why the Accessibility permission survives an upgrade.
+  # Releases are Developer ID signed and notarized (since v0.3.1), so
+  # Gatekeeper opens them without a first-launch block, and the stable
+  # signature is why the Accessibility permission survives an upgrade.
   caveats do
     <<~EOS
-      Agent Tracker needs Accessibility permission to focus a session's terminal
-      window. Its first-run window walks you through granting it.
-
-      FIRST LAUNCH IS BLOCKED, AND THE DIALOG'S DEFAULT BUTTON DELETES THE APP.
-
-      This build is signed but not yet notarized, and Homebrew always
-      quarantines a cask, so macOS refuses the first launch with "Apple could
-      not verify AgentTracker is free of malware", offering "Move to Trash"
-      (highlighted) and "Done".
-
-      Click Done. Never Move to Trash. Then open System Settings > Privacy &
-      Security, scroll to Security, and click "Open Anyway" next to the message
-      naming AgentTracker. Launch it again and it opens normally from then on.
-
-      To skip that entirely, clear the quarantine attribute before the first
-      launch. This switches off a real Gatekeeper check for this app, so only
-      do it if you are comfortable with that:
-
-        xattr -dr com.apple.quarantine -- /Applications/AgentTracker.app
-
-      Only the first launch needs this. Updates keep your Accessibility grant,
-      because every release carries the same code signature.
+      Agent Tracker needs Accessibility permission to focus a session's
+      terminal window. Its first-run window walks you through granting it, and
+      the permission survives updates because every release carries the same
+      Developer ID signature.
     EOS
   end
 end
