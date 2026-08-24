@@ -1,6 +1,6 @@
 cask "agent-tracker" do
-  version "0.6.1"
-  sha256 "b10ccf74672972d95299ce0b08716af8042cce0c709126e13c8fcaa1199fd8ed"
+  version "0.7.0"
+  sha256 "305a7e7f02cc9905d0a3468f46912dd36833bc6a6865e58964c60629701d0484"
 
   url "https://github.com/ThinkVelta/agent-tracker/releases/download/v#{version}/AgentTracker-#{version}.zip",
       verified: "github.com/ThinkVelta/agent-tracker/"
